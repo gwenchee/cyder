@@ -6,7 +6,7 @@
   </control>
 
   <archetypes>
-    <spec><lib>recycle</lib><name>corrm</name></spec>
+    <spec><lib>cyder</lib><name>cyder</name></spec>
     <spec><lib>agents</lib><name>NullRegion</name></spec>
     <spec><lib>agents</lib><name>NullInst</name></spec>
   </archetypes>

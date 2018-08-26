@@ -1,8 +1,8 @@
 ###########################
-Recycle Installation Guide
+Cyder Installation Guide
 ###########################
 
-Recycle uses the CMake cross-platform build-generator. To
+Cyder uses the CMake cross-platform build-generator. To
 simplify the usage of cmake to build Recycle from source, a python script is
 provided with the source.
 
@@ -12,7 +12,7 @@ provided with the source.
 Dependencies
 ************
 
-Recycle's only dependency is the Cyclus Core.
+Cyder's only dependency is the Cyclus Core.
 
 ====================   ==================
 Package                Minimum Version
@@ -130,7 +130,7 @@ installation flag. The otherwise identical process would look like:
 
 .. code-block:: bash
 
-    .../recycle$  python install.py --coin_root=path/to/coin
+    .../cyder$  python install.py --coin_root=path/to/coin
 
 
 CMake Recycle Installation
@@ -186,11 +186,11 @@ proper functioning of Recycle. You can run the tests yourself via:
 
 .. code-block:: bash
 
-    $ recycle_unit_tests
+    $ cyder_unit_tests
 
 
 .. _`Cyclus Homepage`: http://fuelcycle.org/
 .. _`Cyclus User Guide`: http://fuelcycle.org/user/index.html
 .. _`Cyclus repo`: https://github.com/cyclus/cyclus
-.. _`Recycle Repo`: https://github.com/cyclus/recycle
+.. _`Cyder Repo`: https://github.com/arfc/cyder
 
