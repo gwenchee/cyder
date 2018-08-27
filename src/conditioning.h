@@ -17,10 +17,10 @@ class Conditioning;
 namespace conditioning {
 /// @class Conditioning 
 ///
-/// This Facility is intended to take in materials and repackage them 
+/// This Facility is intended to take in materials and package them 
 /// into a new user-specified PackagedMaterial over a user-specified 
 /// amount of time. This Facility aims to model a waste package 
-/// conditioning facility where spent fuel assemblies are repackaged 
+/// conditioning facility where spent fuel assemblies are packaged 
 /// into a waste package that is used to store the waste for its infinite 
 /// time in a final nuclear waste storage repository.  
 ///
@@ -55,7 +55,7 @@ namespace conditioning {
 /// time) is placed in the stocks buffer.
 ///
 /// Any brand new inventory that was received in this timestep is placed into 
-/// the repackaging queue to be repackaged. 
+/// the repackaging queue to be packaged. 
 /// 
 /// Making Requests:
 /// This facility requests all of the in_commod that it can.
@@ -80,9 +80,9 @@ class Conditioning
   #pragma cyclus decl
 
   #pragma cyclus note {"doc": "Conditioning is a facility which accepts any number of commodities " \
-                              "and repackages them over a user specified amount of time. The commodities accepted "\
+                              "and packages them over a user specified amount of time. The commodities accepted "\
                               "are chosen based on the specified preferences list. Once the desired amount of material "\
-                              "has entered the facility it is passed into a 'repackaging' buffer where it is repackaged into a new waste package form and held until"\
+                              "has entered the facility it is passed into a 'repackaging' buffer where it is packaged into a new waste package form and held until"\
                               "the residence time has passed. The material is then passed into a 'ready' buffer where it is "\
                               "queued for removal. Currently, all input commodities are lumped into a single output commodity. "\
                               "Conditioning also has the functionality to handle materials in discrete or continuous batches. Discrete "\
@@ -114,12 +114,12 @@ class Conditioning
   /// @brief Move all unprocessed inventory to processing
   void BeginProcessing_();
 
-  /// @brief move resources from processing to repackaged after repackaging 
+  /// @brief move resources from processing to packaged after packaging 
   /// the material 
   /// @param 
-  void RepackageMatl_();
+  void PackageMatl_();
 
-  /// @brief move ready resources from repackaged to ready at a certain time
+  /// @brief move ready resources from packaged to ready at a certain time
   /// @param time the time of interest
   void ReadyMatl_(int time);
 
@@ -217,11 +217,11 @@ class Conditioning
                       "internal": True}
   std::list<int> entry_times;
 
-  #pragma cyclus var {"tooltip":"Buffer for material before being repackaged"}
+  #pragma cyclus var {"tooltip":"Buffer for material before being packaged"}
   cyclus::toolkit::ResBuf<cyclus::Material> processing;
 
-  #pragma cyclus var {"tooltip":"Buffer for material that is repackaged and still waiting for required residence_time"}
-  cyclus::toolkit::ResBuf<cyclus::Material> repackaged;
+  #pragma cyclus var {"tooltip":"Buffer for material that is packaged and still waiting for required residence_time"}
+  cyclus::toolkit::ResBuf<cyclus::Material> packaged;
 
   //// A policy for requesting material
   cyclus::toolkit::MatlBuyPolicy buy_policy;

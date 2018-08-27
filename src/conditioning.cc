@@ -214,6 +214,13 @@ void Conditioning::ProcessMat_(double cap) {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void Conditioning::PackageMatl_() {
+  using cyclus::toolkit::ResBuf;
+  cout << "Packaged!";
+  packaged.Push(processing.Pop());
+}
+
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Conditioning::ReadyMatl_(int time) {
   using cyclus::toolkit::ResBuf;
 
@@ -224,7 +231,7 @@ void Conditioning::ReadyMatl_(int time) {
     ++to_ready;
   }
 
-  ready.Push(processing.PopN(to_ready));
+  ready.Push(packaged.PopN(to_ready));
 }
 
 void Conditioning::RecordPosition() {
