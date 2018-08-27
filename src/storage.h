@@ -1,47 +1,41 @@
-#ifndef CYDER_SRC_CONDITIONING_H_
-#define CYDER_SRC_CONDITIONING_H_
+#ifndef CYCLUS_STORAGES_STORAGE_H_
+#define CYCLUS_STORAGES_STORAGE_H_
 
 #include <string>
 #include <list>
 #include <vector>
 
 #include "cyclus.h"
-#include "cyder_version.h"
 
 // forward declaration
-//namespace cyder {
-//class Conditioning;
-//} // namespace conditioning
+namespace storage {
+class Storage;
+} // namespace storage
 
 
-namespace cyder {
-/// @class Conditioning 
+namespace storage {
+/// @class Storage
 ///
-/// This Facility is intended to take in materials and package them 
-/// into a new user-specified PackagedMaterial over a user-specified 
-/// amount of time. This Facility aims to model a waste package 
-/// conditioning facility where spent fuel assemblies are packaged 
-/// into a waste package that is used to store the waste for its infinite 
-/// time in a final nuclear waste storage repository.  
-///
-/// The Conditioning class inherits from the Facility class and is
+/// This Facility is intended to hold materials for a user specified
+/// amount of time in order to model a storage facility with a certain
+/// residence time or holdup time.
+/// The Storage class inherits from the Facility class and is
 /// dynamically loaded by the Agent class when requested.
+///
+/// @section intro Introduction
+/// This Agent was initially developed to support the fco code-to-code 
+/// comparison.
+/// It's very similar to the "NullFacility" of years 
+/// past. Its purpose is to hold materials and release them only  
+/// after some period of delay time.
 ///
 /// @section agentparams Agent Parameters
 /// in_commods is a vector of strings naming the commodities that this facility receives
 /// out_commods is a string naming the commodity that in_commod is stocks into
 /// residence_time is the minimum number of timesteps between receiving and offering
-/// 
-/// height_canister is the height of the canister
-/// no_assemblies is the number of assemblies that is accepted by one canister  
-/// radius_wasteform is the radius of the wasteform
-/// radius_layer1 is the radius of the first layer of the waste package 
-/// thermal_conductivity_layer1 is the thermal conducitivity of the first layer of the waste package 
-/// there can be as many layers as the user desires, with names radius_layer2, 
-/// thermal_conductivity_layer2 and so on...  
+/// in_recipe (optional) describes the incoming resource by recipe
 /// 
 /// @section optionalparams Optional Parameters
-/// in_recipe describes the incoming resource by recipe
 /// max_inv_size is the maximum capacity of the inventory storage
 /// throughput is the maximum processing capacity per timestep
 ///
@@ -55,7 +49,7 @@ namespace cyder {
 /// time) is placed in the stocks buffer.
 ///
 /// Any brand new inventory that was received in this timestep is placed into 
-/// the repackaging queue to be packaged. 
+/// the processing queue to begin waiting. 
 /// 
 /// Making Requests:
 /// This facility requests all of the in_commod that it can.
@@ -69,40 +63,40 @@ namespace cyder {
 ///
 /// Sending Resources:
 /// Matched resources are sent immediately.
-class Conditioning
+class Storage 
   : public cyclus::Facility,
     public cyclus::toolkit::CommodityProducer,
     public cyclus::toolkit::Position {
  public:  
   /// @param ctx the cyclus context for access to simulation-wide parameters
-  Conditioning(cyclus::Context* ctx);
+  Storage(cyclus::Context* ctx);
   
   #pragma cyclus decl
 
-  #pragma cyclus note {"doc": "Conditioning is a facility which accepts any number of commodities " \
-                              "and packages them over a user specified amount of time. The commodities accepted "\
+  #pragma cyclus note {"doc": "Storage is a simple facility which accepts any number of commodities " \
+                              "and holds them for a user specified amount of time. The commodities accepted "\
                               "are chosen based on the specified preferences list. Once the desired amount of material "\
-                              "has entered the facility it is passed into a 'repackaging' buffer where it is packaged into a new waste package form and held until"\
+                              "has entered the facility it is passed into a 'processing' buffer where it is held until "\
                               "the residence time has passed. The material is then passed into a 'ready' buffer where it is "\
                               "queued for removal. Currently, all input commodities are lumped into a single output commodity. "\
-                              "Conditioning also has the functionality to handle materials in discrete or continuous batches. Discrete "\
+                              "Storage also has the functionality to handle materials in discrete or continuous batches. Discrete "\
                               "mode, which is the default, does not split or combine material batches. Continuous mode, however, "\
                               "divides material batches if necessary in order to push materials through the facility as quickly "\
                               "as possible."}
 
-  /// A verbose printer for the Conditioning Facility
+  /// A verbose printer for the Storage Facility
   virtual std::string str();
 
   // --- Facility Members ---
   
   // --- Agent Members ---
-  /// Sets up the Conditioning Facility's trade requests
+  /// Sets up the Storage Facility's trade requests
   virtual void EnterNotify();
 
-  /// The handleTick function specific to the Conditioning Facility.
+  /// The handleTick function specific to the Storage.
   virtual void Tick();
 
-  /// The handleTick function specific to the Conditioning Facility.
+  /// The handleTick function specific to the Storage.
   virtual void Tock();
 
  protected:
@@ -114,21 +108,15 @@ class Conditioning
   /// @brief Move all unprocessed inventory to processing
   void BeginProcessing_();
 
-  /// @brief move resources from processing to packaged after packaging 
-  /// the material 
-  /// @param 
-  void PackageMatl_();
-
-  /// @brief move ready resources from packaged to ready at a certain time
-  /// @param time the time of interest
-  void ReadyMatl_(int time);
-
   /// @brief Move as many ready resources as allowable into stocks
   /// @param cap current throughput capacity 
   void ProcessMat_(double cap);
 
+  /// @brief move ready resources from processing to ready at a certain time
+  /// @param time the time of interest
+  void ReadyMatl_(int time);
 
-    /* -- Conditioning Members --- */
+    /* --- Storage Members --- */
 
   /// @brief current maximum amount that can be added to processing
   inline double current_capacity() const { 
@@ -187,7 +175,7 @@ class Conditioning
 
   #pragma cyclus var {"default": 1e299,\
                       "tooltip":"maximum inventory size (kg)",\
-                      "doc":"the maximum amount of material that can be in all conditioning buffer stages",\
+                      "doc":"the maximum amount of material that can be in all storage buffer stages",\
                       "uilabel":"Maximum Inventory Size",\
                       "uitype": "range", \
                       "range": [0.0, 1e299], \
@@ -195,8 +183,8 @@ class Conditioning
   double max_inv_size; 
 
   #pragma cyclus var {"default": False,\
-                      "tooltip":"Bool to determine how Conditioning handles batches",\
-                      "doc":"Determines if Conditioning will divide resource objects. Only controls material "\
+                      "tooltip":"Bool to determine how Storage handles batches",\
+                      "doc":"Determines if Storage will divide resource objects. Only controls material "\
                             "handling within this facility, has no effect on DRE material handling. "\
                             "If true, batches are handled as discrete quanta, neither split nor combined. "\
                             "Otherwise, batches may be divided during processing. Default to false (continuous))",\
@@ -217,11 +205,8 @@ class Conditioning
                       "internal": True}
   std::list<int> entry_times;
 
-  #pragma cyclus var {"tooltip":"Buffer for material before being packaged"}
+  #pragma cyclus var {"tooltip":"Buffer for material still waiting for required residence_time"}
   cyclus::toolkit::ResBuf<cyclus::Material> processing;
-
-  #pragma cyclus var {"tooltip":"Buffer for material that is packaged and still waiting for required residence_time"}
-  cyclus::toolkit::ResBuf<cyclus::Material> packaged;
 
   //// A policy for requesting material
   cyclus::toolkit::MatlBuyPolicy buy_policy;
@@ -249,9 +234,9 @@ class Conditioning
 
   void RecordPosition();
 
-  friend class ConditioningTest;
+  friend class StorageTest;
 };
 
-}  // namespace conditioning
+}  // namespace storage
 
-#endif // CYDER_SRC_CONDITIONING_H_
+#endif // CYCLUS_STORAGES_STORAGE_H_

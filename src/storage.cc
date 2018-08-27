@@ -1,46 +1,44 @@
-// conditioning.cc
-// Implements the Conditioning class
+// storage.cc
+// Implements the Storage class
+#include "storage.h"
 
-#include "conditioning.h"
-#include "cyclus.h"
-
-namespace cyder {
+namespace storage {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Conditioning::Conditioning(cyclus::Context* ctx) 
+Storage::Storage(cyclus::Context* ctx) 
     : cyclus::Facility(ctx),
       latitude(0.0),
       longitude(0.0),
       coordinates(latitude, longitude) {
   cyclus::Warn<cyclus::EXPERIMENTAL_WARNING>(
-      "The Conditioning Facility is experimental.");};
+      "The Storage Facility is experimental.");};
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // pragmas
 
-#pragma cyder def schema conditioning::Conditioning
+#pragma cyclus def schema storage::Storage
 
-#pragma cyder def annotations conditioning::Conditioning
+#pragma cyclus def annotations storage::Storage
 
-#pragma cyder def initinv conditioning::Conditioning
+#pragma cyclus def initinv storage::Storage
 
-#pragma cyder def snapshotinv conditioning::Conditioning
+#pragma cyclus def snapshotinv storage::Storage
 
-#pragma cyder def infiletodb conditioning::Conditioning
+#pragma cyclus def infiletodb storage::Storage
 
-#pragma cyder def snapshot conditioning::Conditioning
+#pragma cyclus def snapshot storage::Storage
 
-#pragma cyder def clone conditioning::Conditioning
+#pragma cyclus def clone storage::Storage
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::InitFrom(Conditioning* m) {
-#pragma cyder impl initfromcopy conditioning::Conditioning
+void Storage::InitFrom(Storage* m) {
+#pragma cyclus impl initfromcopy storage::Storage
   cyclus::toolkit::CommodityProducer::Copy(m);
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::InitFrom(cyclus::QueryableBackend* b) {
-#pragma cyder impl initfromdb conditioning::Conditioning
+void Storage::InitFrom(cyclus::QueryableBackend* b) {
+#pragma cyclus impl initfromdb storage::Storage
 
   using cyclus::toolkit::Commodity;
   Commodity commod = Commodity(out_commods.front());
@@ -49,7 +47,7 @@ void Conditioning::InitFrom(cyclus::QueryableBackend* b) {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::EnterNotify() {
+void Storage::EnterNotify() {
   cyclus::Facility::EnterNotify();
   buy_policy.Init(this, &inventory, std::string("inventory"));
 
@@ -89,7 +87,7 @@ void Conditioning::EnterNotify() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-std::string Conditioning::str() {
+std::string Storage::str() {
   std::stringstream ss;
   std::string ans, out_str;
   if (out_commods.size() == 1) {
@@ -115,7 +113,7 @@ std::string Conditioning::str() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::Tick() {
+void Storage::Tick() {
   // Set available capacity for Buy Policy
   inventory.capacity(current_capacity());
 
@@ -129,7 +127,7 @@ void Conditioning::Tick() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::Tock() {
+void Storage::Tock() {
   LOG(cyclus::LEV_INFO3, "ComCnv") << prototype() << " is tocking {";
 
   BeginProcessing_();  // place unprocessed inventory into processing
@@ -144,7 +142,7 @@ void Conditioning::Tock() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::AddMat_(cyclus::Material::Ptr mat) {
+void Storage::AddMat_(cyclus::Material::Ptr mat) {
   LOG(cyclus::LEV_INFO5, "ComCnv") << prototype() << " is initially holding "
                                    << inventory.quantity() << " total.";
 
@@ -162,14 +160,14 @@ void Conditioning::AddMat_(cyclus::Material::Ptr mat) {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::BeginProcessing_() {
+void Storage::BeginProcessing_() {
   while (inventory.count() > 0) {
     try {
       processing.Push(inventory.Pop());
       entry_times.push_back(context()->time());
 
       LOG(cyclus::LEV_DEBUG2, "ComCnv")
-          << "Conditioning " << prototype()
+          << "Storage " << prototype()
           << " added resources to processing at t= " << context()->time();
     } catch (cyclus::Error& e) {
       e.msg(Agent::InformErrorMsg(e.msg()));
@@ -179,7 +177,7 @@ void Conditioning::BeginProcessing_() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::ProcessMat_(double cap) {
+void Storage::ProcessMat_(double cap) {
   using cyclus::Material;
   using cyclus::ResCast;
   using cyclus::toolkit::ResBuf;
@@ -203,7 +201,7 @@ void Conditioning::ProcessMat_(double cap) {
         stocks.Push(ready.Pop(max_pop, cyclus::eps_rsrc()));
       }
 
-      LOG(cyclus::LEV_INFO1, "ComCnv") << "Conditioning " << prototype()
+      LOG(cyclus::LEV_INFO1, "ComCnv") << "Storage " << prototype()
                                        << " moved resources"
                                        << " from ready to stocks"
                                        << " at t= " << context()->time();
@@ -215,14 +213,7 @@ void Conditioning::ProcessMat_(double cap) {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::PackageMatl_() {
-  using cyclus::toolkit::ResBuf;
-  std::cout << "packaged" << std::endl;
-  packaged.Push(processing.Pop());
-}
-
-//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::ReadyMatl_(int time) {
+void Storage::ReadyMatl_(int time) {
   using cyclus::toolkit::ResBuf;
 
   int to_ready = 0;
@@ -232,10 +223,10 @@ void Conditioning::ReadyMatl_(int time) {
     ++to_ready;
   }
 
-  ready.Push(packaged.PopN(to_ready));
+  ready.Push(processing.PopN(to_ready));
 }
 
-void Conditioning::RecordPosition() {
+void Storage::RecordPosition() {
   std::string specification = this->spec();
   context()
       ->NewDatum("AgentPosition")
@@ -249,8 +240,8 @@ void Conditioning::RecordPosition() {
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" cyclus::Agent* ConstructConditioning(cyclus::Context* ctx) {
-  return new Conditioning(ctx);
+extern "C" cyclus::Agent* ConstructStorage(cyclus::Context* ctx) {
+  return new Storage(ctx);
 }
 
-} // namespace conditioning
+} // namespace storage
