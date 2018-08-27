@@ -128,7 +128,7 @@ class Conditioning
   void ProcessMat_(double cap);
 
 
-    /* --- Storage Members --- */
+    /* -- Conditioning Members --- */
 
   /// @brief current maximum amount that can be added to processing
   inline double current_capacity() const { 
@@ -187,7 +187,7 @@ class Conditioning
 
   #pragma cyclus var {"default": 1e299,\
                       "tooltip":"maximum inventory size (kg)",\
-                      "doc":"the maximum amount of material that can be in all storage buffer stages",\
+                      "doc":"the maximum amount of material that can be in all conditioning buffer stages",\
                       "uilabel":"Maximum Inventory Size",\
                       "uitype": "range", \
                       "range": [0.0, 1e299], \
@@ -195,8 +195,8 @@ class Conditioning
   double max_inv_size; 
 
   #pragma cyclus var {"default": False,\
-                      "tooltip":"Bool to determine how Storage handles batches",\
-                      "doc":"Determines if Storage will divide resource objects. Only controls material "\
+                      "tooltip":"Bool to determine how Conditioning handles batches",\
+                      "doc":"Determines if Conditioning will divide resource objects. Only controls material "\
                             "handling within this facility, has no effect on DRE material handling. "\
                             "If true, batches are handled as discrete quanta, neither split nor combined. "\
                             "Otherwise, batches may be divided during processing. Default to false (continuous))",\
@@ -249,9 +249,9 @@ class Conditioning
 
   void RecordPosition();
 
-  friend class StorageTest;
+  friend class ConditioningTest;
 };
 
-}  // namespace storage
+}  // namespace conditioning
 
-#endif // CYCLUS_STORAGES_STORAGE_H_
+#endif // CYDER_SRC_CONDITIONING_H_
