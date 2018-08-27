@@ -38,7 +38,7 @@ void Conditioning::InitFrom(Conditioning* m) {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Storage::InitFrom(cyclus::QueryableBackend* b) {
+void Conditioning::InitFrom(cyclus::QueryableBackend* b) {
 #pragma cyclus impl initfromdb conditioning::Conditioning
 
   using cyclus::toolkit::Commodity;
@@ -128,7 +128,7 @@ void Conditioning::Tick() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Storage::Tock() {
+void Conditioning::Tock() {
   LOG(cyclus::LEV_INFO3, "ComCnv") << prototype() << " is tocking {";
 
   BeginProcessing_();  // place unprocessed inventory into processing
@@ -143,7 +143,7 @@ void Storage::Tock() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Storage::AddMat_(cyclus::Material::Ptr mat) {
+void Conditioning::AddMat_(cyclus::Material::Ptr mat) {
   LOG(cyclus::LEV_INFO5, "ComCnv") << prototype() << " is initially holding "
                                    << inventory.quantity() << " total.";
 
@@ -161,14 +161,14 @@ void Storage::AddMat_(cyclus::Material::Ptr mat) {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Storage::BeginProcessing_() {
+void Conditioning::BeginProcessing_() {
   while (inventory.count() > 0) {
     try {
       processing.Push(inventory.Pop());
       entry_times.push_back(context()->time());
 
       LOG(cyclus::LEV_DEBUG2, "ComCnv")
-          << "Storage " << prototype()
+          << "Conditioning " << prototype()
           << " added resources to processing at t= " << context()->time();
     } catch (cyclus::Error& e) {
       e.msg(Agent::InformErrorMsg(e.msg()));
@@ -178,7 +178,7 @@ void Storage::BeginProcessing_() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Storage::ProcessMat_(double cap) {
+void Conditioning::ProcessMat_(double cap) {
   using cyclus::Material;
   using cyclus::ResCast;
   using cyclus::toolkit::ResBuf;
@@ -202,7 +202,7 @@ void Storage::ProcessMat_(double cap) {
         stocks.Push(ready.Pop(max_pop, cyclus::eps_rsrc()));
       }
 
-      LOG(cyclus::LEV_INFO1, "ComCnv") << "Storage " << prototype()
+      LOG(cyclus::LEV_INFO1, "ComCnv") << "Conditioning " << prototype()
                                        << " moved resources"
                                        << " from ready to stocks"
                                        << " at t= " << context()->time();
@@ -214,7 +214,7 @@ void Storage::ProcessMat_(double cap) {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Storage::ReadyMatl_(int time) {
+void Conditioning::ReadyMatl_(int time) {
   using cyclus::toolkit::ResBuf;
 
   int to_ready = 0;
@@ -227,7 +227,7 @@ void Storage::ReadyMatl_(int time) {
   ready.Push(processing.PopN(to_ready));
 }
 
-void Storage::RecordPosition() {
+void Conditioning::RecordPosition() {
   std::string specification = this->spec();
   context()
       ->NewDatum("AgentPosition")
@@ -241,8 +241,8 @@ void Storage::RecordPosition() {
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" cyclus::Agent* ConstructStorage(cyclus::Context* ctx) {
-  return new Storage(ctx);
+extern "C" cyclus::Agent* ConstructConditioning(cyclus::Context* ctx) {
+  return new Conditioning(ctx);
 }
 
 } // namespace conditioning
