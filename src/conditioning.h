@@ -90,19 +90,19 @@ class Conditioning
                               "divides material batches if necessary in order to push materials through the facility as quickly "\
                               "as possible."}
 
-  /// A verbose printer for the Storage Facility
+  /// A verbose printer for the Conditioning Facility
   virtual std::string str();
 
   // --- Facility Members ---
   
   // --- Agent Members ---
-  /// Sets up the Storage Facility's trade requests
+  /// Sets up the Conditioning Facility's trade requests
   virtual void EnterNotify();
 
-  /// The handleTick function specific to the Storage.
+  /// The handleTick function specific to the Conditioning Facility.
   virtual void Tick();
 
-  /// The handleTick function specific to the Storage.
+  /// The handleTick function specific to the Conditioning Facility.
   virtual void Tock();
 
  protected:
@@ -114,13 +114,19 @@ class Conditioning
   /// @brief Move all unprocessed inventory to processing
   void BeginProcessing_();
 
+  /// @brief move resources from processing to repackaged after repackaging 
+  /// the material 
+  /// @param 
+  void RepackageMatl_();
+
+  /// @brief move ready resources from repackaged to ready at a certain time
+  /// @param time the time of interest
+  void ReadyMatl_(int time);
+
   /// @brief Move as many ready resources as allowable into stocks
   /// @param cap current throughput capacity 
   void ProcessMat_(double cap);
 
-  /// @brief move ready resources from processing to ready at a certain time
-  /// @param time the time of interest
-  void ReadyMatl_(int time);
 
     /* --- Storage Members --- */
 
