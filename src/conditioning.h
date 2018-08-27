@@ -217,8 +217,11 @@ class Conditioning
                       "internal": True}
   std::list<int> entry_times;
 
-  #pragma cyclus var {"tooltip":"Buffer for material still waiting for required residence_time"}
+  #pragma cyclus var {"tooltip":"Buffer for material before being repackaged"}
   cyclus::toolkit::ResBuf<cyclus::Material> processing;
+
+  #pragma cyclus var {"tooltip":"Buffer for material that is repackaged and still waiting for required residence_time"}
+  cyclus::toolkit::ResBuf<cyclus::Material> repackaged;
 
   //// A policy for requesting material
   cyclus::toolkit::MatlBuyPolicy buy_policy;
