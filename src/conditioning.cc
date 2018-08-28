@@ -2,7 +2,15 @@
 // Implements the Conditioning class
 
 #include "conditioning.h"
-#include "cyclus.h"
+
+using cyclus::Material;
+using cyclus::Composition;
+using cyclus::toolkit::ResBuf;
+using cyclus::toolkit::MatVec;
+using cyclus::KeyError;
+using cyclus::ValueError;
+using cyclus::Request;
+using cyclus::CompMap;
 
 namespace cyder {
 
@@ -18,29 +26,29 @@ Conditioning::Conditioning(cyclus::Context* ctx)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // pragmas
 
-#pragma cyder def schema conditioning::Conditioning
+#pragma cyclus def schema conditioning::Conditioning
 
-#pragma cyder def annotations conditioning::Conditioning
+#pragma cyclus def annotations conditioning::Conditioning
 
-#pragma cyder def initinv conditioning::Conditioning
+#pragma cyclus def initinv conditioning::Conditioning
 
-#pragma cyder def snapshotinv conditioning::Conditioning
+#pragma cyclus def snapshotinv conditioning::Conditioning
 
-#pragma cyder def infiletodb conditioning::Conditioning
+#pragma cyclus def infiletodb conditioning::Conditioning
 
-#pragma cyder def snapshot conditioning::Conditioning
+#pragma cyclus def snapshot conditioning::Conditioning
 
-#pragma cyder def clone conditioning::Conditioning
+#pragma cyclus def clone conditioning::Conditioning
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Conditioning::InitFrom(Conditioning* m) {
-#pragma cyder impl initfromcopy conditioning::Conditioning
+#pragma cyclus impl initfromcopy conditioning::Conditioning
   cyclus::toolkit::CommodityProducer::Copy(m);
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Conditioning::InitFrom(cyclus::QueryableBackend* b) {
-#pragma cyder impl initfromdb conditioning::Conditioning
+#pragma cyclus impl initfromdb conditioning::Conditioning
 
   using cyclus::toolkit::Commodity;
   Commodity commod = Commodity(out_commods.front());

@@ -9,12 +9,12 @@
 #include "cyder_version.h"
 
 // forward declaration
-//namespace cyder {
-//class Conditioning;
-//} // namespace conditioning
+namespace conditioning {
+class Conditioning;
+} // namespace conditioning
 
 
-namespace cyder {
+namespace conditioning {
 /// @class Conditioning 
 ///
 /// This Facility is intended to take in materials and package them 
