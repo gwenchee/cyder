@@ -9,6 +9,7 @@ SET(CYCLUS_CUSTOM_HEADERS "cyder_version.h")
 #USE_CYCLUS("cyder" "packaged_material")
 USE_CYCLUS("cyder" "conditioning")
 #USE_CYCLUS("cyder" "storage")
+#USE_CYCLUS("cyder" "pyre")
 
 INSTALL_CYCLUS_MODULE("cyder" "" "NONE")
 
