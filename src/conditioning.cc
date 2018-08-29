@@ -3,7 +3,7 @@
 
 #include "conditioning.h"
 
-namespace cyder {
+namespace conditioning {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Conditioning::Conditioning(cyclus::Context* ctx) 
