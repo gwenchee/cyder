@@ -213,6 +213,7 @@ void Conditioning::ReadyMatl_(int time) {
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Conditioning::ProcessMat_(double cap) {
+  using cyder::PackagedMaterial;
   using cyclus::Material;
   using cyclus::ResCast;
   using cyclus::toolkit::ResBuf;
