@@ -113,7 +113,7 @@ class Conditioning
 
 /// @brief move ready resources from processing to packaged after repackaging
   /// @param *** ADD HERE ***
-  void PackageMatl_();
+  void PackageMatl_(int assembly_num);
 
   /// @brief move ready resources from packaged to ready at a certain time
   /// @param time the time of interest
@@ -170,6 +170,15 @@ class Conditioning
                       "uitype": "range", \
                       "range": [0, 12000]}
   int residence_time;
+
+  #pragma cyclus var {"default": 10,\
+                      "tooltip":"residence time (timesteps)",\
+                      "doc":"the minimum holding time for a received commodity (timesteps).",\
+                      "units":"time steps",\
+                      "uilabel":"Residence Time", \
+                      "uitype": "range", \
+                      "range": [0, 12000]}
+  int assembly_num;
 
   #pragma cyclus var {"default": 1e299,\
                      "tooltip":"throughput per timestep (kg)",\

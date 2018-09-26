@@ -132,7 +132,7 @@ void Conditioning::Tock() {
   LOG(cyclus::LEV_INFO3, "ComCnv") << prototype() << " is tocking {";
 
   BeginProcessing_();  // place unprocessed inventory into processing
-  PackageMatl_();
+  PackageMatl_(assembly_num);
 
   if (ready_time() >= 0 || residence_time == 0 && !inventory.empty()) {
     ReadyMatl_(ready_time());  // place processing into ready
@@ -180,20 +180,29 @@ void Conditioning::BeginProcessing_() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void Conditioning::PackageMatl_() {
-   while (processing.count() > 0) {
-    try {
-      packaged.Push(processing.Pop());
-      std::cout << "packaged" << std::endl;
+void Conditioning::PackageMatl_(int assem_num) {
 
-      LOG(cyclus::LEV_DEBUG2, "ComCnv")
-          << "Conditioning " << prototype()
-          << " added resources to packaged at t= " << context()->time();
-    } catch (cyclus::Error& e) {
-      e.msg(Agent::InformErrorMsg(e.msg()));
-      throw e;
-    }
-  }
+  // number of packaged materials created 
+  num_packages = processing.quantity()
+
+  PackagedMaterial::matstream temp_stream;
+
+  while (processing.count() > 0) {
+    try {
+      if (temp_stream.quantity()<assem_num){
+          temp_stream.Push(processing.Pop());
+      }
+      else {
+
+
+          
+      }
+      
+}  
+  
+  // add temp stream into packaged material
+
+}
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
