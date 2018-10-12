@@ -30,7 +30,7 @@ class ConditioningTest : public ::testing::Test {
   void TestCurrentCap(conditioning::Conditioning* fac, double inv);
 
   std::vector<std::string> in_c1, out_c1;
-  //std::string in_r1;
+  std::string in_r1;
 
   int residence_time, package_size;
   double throughput, max_inv_size;
