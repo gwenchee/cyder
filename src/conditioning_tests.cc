@@ -22,32 +22,34 @@ void ConditioningTest::InitParameters(){
   residence_time = 10;
   max_inv_size = 200;
   throughput = 20;
-  discrete_handling = 0;
+  package_size = 5 
 
-  cyclus::CompMap v;
-  v[922350000] = 1;
-  v[922380000] = 2;
-  cyclus::Composition::Ptr recipe = cyclus::Composition::CreateFromAtom(v);
-  tc_.get()->AddRecipe(in_r1, recipe);
+  std::map<std::string, std::map<std::string, double>> package_properties; 
+  package_properties['basic']['radius'] = 1.1;
+  package_properties['basic']['thermalconductivity'] = 10.1;
+  package_properties['layer1']['radius'] = 2.2;
+  package_properties['layer1']['thermalconductivity'] = 20.2;
 }
 
 void ConditioningTest::SetUpConditioning(){
-  src_facility_->in_recipe = in_r1;
+  //src_facility_->in_recipe = in_r1;
   src_facility_->in_commods = in_c1;
   src_facility_->out_commods = out_c1;
   src_facility_->residence_time = residence_time;
   src_facility_->max_inv_size = max_inv_size;
   src_facility_->throughput = throughput;
-  src_facility_->discrete_handling = discrete_handling;
+  src_facility_->package_size = package_size;
+  //src_facility_->discrete_handling = discrete_handling;
+  src_facility_->package_properties = package_properties; 
 }
 
 void ConditioningTest::TestInitState(Conditioning* fac){
   EXPECT_EQ(residence_time, fac->residence_time);
   EXPECT_EQ(max_inv_size, fac->max_inv_size);
   EXPECT_EQ(throughput, fac->throughput);
-  EXPECT_EQ(in_r1, fac->in_recipe);
+  //EXPECT_EQ(in_r1, fac->in_recipe);
 }
-
+/*
 void ConditioningTest::TestAddMat(Conditioning* fac, 
     cyclus::Material::Ptr mat){
   double amt = mat->quantity();
@@ -56,6 +58,7 @@ void ConditioningTest::TestAddMat(Conditioning* fac,
   double after = fac->inventory.quantity();
   EXPECT_EQ(amt, after - before);
 }
+*/
 
 void ConditioningTest::TestBuffers(Conditioning* fac, double inv, 
     double proc, double ready, double stocks){
@@ -67,12 +70,12 @@ void ConditioningTest::TestBuffers(Conditioning* fac, double inv,
   EXPECT_EQ(ready, fac->ready.quantity());
 }
 
-void ConditioningTest::TestStocks(Conditioning* fac, cyclus::CompMap v){
+void ConditioningTest::TestStocks(Conditioning* fac, std::map<std::string, std::map<std::string, double>> package_properties ){
 
-  cyclus::toolkit::ResBuf<cyclus::Material>* buffer = &fac->stocks;
-  Material::Ptr final_mat = cyclus::ResCast<Material>(buffer->PopBack());
-  cyclus::CompMap final_comp = final_mat->comp()->atom();
-  EXPECT_EQ(final_comp,v);
+  cyclus::toolkit::ResBuf<cyclus::PackagedMaterial>* buffer = &fac->stocks;
+  PackagedMaterial::Ptr final_pacmat = cyclus::ResCast<PackagedMaterial>(buffer->PopBack());
+  std::map<std::string, std::map<std::string, double>> final_package = final_pacmat->quality();
+  EXPECT_EQ(final_package,package_properties);
 
 }
 
@@ -114,6 +117,7 @@ TEST_F(ConditioningTest, Print) {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*
 TEST_F(ConditioningTest, AddMats) { 
   double cap = max_inv_size;
   cyclus::Material::Ptr mat = cyclus::NewBlankMaterial(0.5*cap);
@@ -123,6 +127,7 @@ TEST_F(ConditioningTest, AddMats) {
   cyclus::Material::Ptr recmat = cyclus::Material::CreateUntracked(0.5*cap, rec);
   TestAddMat(src_facility_, recmat);
 }
+*/
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 TEST_F(ConditioningTest, Tick) {
@@ -137,9 +142,15 @@ TEST_F(ConditioningTest, Tock) {
   TestBuffers(src_facility_,0,0,0,0);
 
   double cap = throughput;
+
   cyclus::Composition::Ptr rec = tc_.get()->GetRecipe(in_r1);
-  cyclus::Material::Ptr mat = cyclus::Material::CreateUntracked(cap, rec);
-  TestAddMat(src_facility_, mat);
+  cyclus::PackagedMaterial::matstream temp_stream; 
+  temp_stream.push_back(rec);
+  std::map<std::string, std::map<std::string, double>> package_prop = package_properties; 
+  cyclus::PackagedMaterial::package temp_package (temp_stream,package_prop);
+
+  cyclus::PackagedMaterial::Ptr pacmat = cyclus::PackagedMaterial::CreateUntracked(cap, temp_package);
+  //TestAddMat(src_facility_, mat);
 
   // affter add, the inventory has the material
   TestBuffers(src_facility_,cap,0,0,0);

@@ -21,20 +21,21 @@ class ConditioningTest : public ::testing::Test {
   void InitParameters();
   void SetUpConditioning();
   void TestInitState(conditioning::Conditioning* fac);
-  void TestAddMat(conditioning::Conditioning* fac, 
-      cyclus::Material::Ptr mat);
+  //void TestAddMat(conditioning::Conditioning* fac, 
+  //    cyclus::Material::Ptr mat);
   void TestBuffers(conditioning::Conditioning* fac, double inv, double 
       proc, double ready, double stocks);
-  void TestStocks(conditioning::Conditioning* fac, cyclus::CompMap v);
+  void TestStocks(conditioning::Conditioning* fac, std::map<std::string, std::map<std::string, double>> package_properties);
   void TestReadyTime(conditioning::Conditioning* fac, int t);
   void TestCurrentCap(conditioning::Conditioning* fac, double inv);
 
   std::vector<std::string> in_c1, out_c1;
-  std::string in_r1;
+  //std::string in_r1;
 
-  int residence_time;
+  int residence_time, package_size;
   double throughput, max_inv_size;
-  bool discrete_handling;
+  std::map<std::string, std::map<std::string, double>> package_properties; 
+  //bool discrete_handling;
 };
 } // namespace conditioning
 #endif // CONDITIONING_TESTS_H_
