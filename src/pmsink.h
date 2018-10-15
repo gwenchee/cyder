@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "cyclus.h"
+#include "cyder_version.h"
 
 // forward declaration
 namespace pmsink {
@@ -55,27 +56,28 @@ class PmSink
   ///   @brief adds a material into the incoming commodity inventory
   ///   @param mat the material to add to the incoming inventory.
   ///   @throws if there is trouble with pushing to the inventory buffer.
-  void AddMat_(cyclus::Material::Ptr mat);
+  //void AddMat_(cyclus::Material::Ptr mat);
 
   /// @brief Move all unprocessed inventory to processing
-  void BeginProcessing_();
+  //void BeginProcessing_();
+  void Store_(double cap);
 
   /// @brief Move as many ready resources as allowable into stocks
   /// @param cap current throughput capacity 
-  void ProcessMat_(double cap);
+  //void ProcessMat_(double cap);
 
   /// @brief move ready resources from processing to ready at a certain time
   /// @param time the time of interest
-  void ReadyMatl_(int time);
+  //void ReadyMatl_(int time);
 
     /* --- PmSink Members --- */
 
-  /// @brief current maximum amount that can be added to processing
+  /// @brief current maximum amount that can be added to store 
   inline double current_capacity() const { 
-    return (max_inv_size - processing.quantity() - stocks.quantity()); }
+    return (max_inv_size - store.quantity()); }
 
   /// @brief returns the time key for ready materials
-  int ready_time(){ return context()->time() - residence_time; }
+  //int ready_time(){ return context()->time() - residence_time; }
 
   /* --- Module Members --- */
 
@@ -93,6 +95,7 @@ class PmSink
                       "uitype":["oneormore", "range"]}
   std::vector<double> in_commod_prefs;
 
+/*
   #pragma cyclus var {"tooltip":"output commodity",\
                       "doc":"commodity produced by this facility. Multiple commodity tracking is"\
                       " currently not supported, one output commodity catches all input commodities.",\
@@ -115,6 +118,7 @@ class PmSink
                       "uitype": "range", \
                       "range": [0, 12000]}
   int residence_time;
+*/
 
   #pragma cyclus var {"default": 1e299,\
                      "tooltip":"throughput per timestep (kg)",\
@@ -134,6 +138,7 @@ class PmSink
                       "units":"kg"}
   double max_inv_size; 
 
+/*
   #pragma cyclus var {"default": False,\
                       "tooltip":"Bool to determine how PmSink handles batches",\
                       "doc":"Determines if PmSink will divide resource objects. Only controls material "\
@@ -141,11 +146,16 @@ class PmSink
                             "If true, batches are handled as discrete quanta, neither split nor combined. "\
                             "Otherwise, batches may be divided during processing. Default to false (continuous))",\
                       "uilabel":"Batch Handling"}
-  bool discrete_handling;                    
+  bool discrete_handling;              
+  */      
 
   #pragma cyclus var {"tooltip":"Incoming material buffer"}
-  cyclus::toolkit::ResBuf<cyclus::Material> inventory;
+  cyclus::toolkit::ResBuf<cyclus::PackagedMaterial> inventory;
 
+  #pragma cyclus var {"tooltip":"Incoming material buffer"}
+  cyclus::toolkit::ResBuf<cyclus::PackagedMaterial> store;
+
+/*
   #pragma cyclus var {"tooltip":"Output material buffer"}
   cyclus::toolkit::ResBuf<cyclus::Material> stocks;
 
@@ -159,12 +169,13 @@ class PmSink
 
   #pragma cyclus var {"tooltip":"Buffer for material still waiting for required residence_time"}
   cyclus::toolkit::ResBuf<cyclus::Material> processing;
+  */
 
   //// A policy for requesting material
-  cyclus::toolkit::MatlBuyPolicy buy_policy;
+  cyclus::toolkit::PackagedMatlBuyPolicy buy_policy;
 
   //// A policy for sending material
-  cyclus::toolkit::MatlSellPolicy sell_policy;
+  //cyclus::toolkit::MatlSellPolicy sell_policy;
 
   #pragma cyclus var { \
     "default": 0.0, \
@@ -186,9 +197,9 @@ class PmSink
 
   void RecordPosition();
 
-  friend class PmSinkTest;
+  //friend class PmSinkTest;
 };
 
 }  // namespace pmsink
 
-#endif // CYCLUS_STORAGES_STORAGE_H_
+#endif // CYCLUS_PMSINKS_PMSINK_H_

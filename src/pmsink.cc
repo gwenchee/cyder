@@ -37,14 +37,17 @@ void PmSink::InitFrom(PmSink* m) {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 void PmSink::InitFrom(cyclus::QueryableBackend* b) {
 #pragma cyclus impl initfromdb pmsink::PmSink
-
+/*
   using cyclus::toolkit::Commodity;
   Commodity commod = Commodity(out_commods.front());
   cyclus::toolkit::CommodityProducer::Add(commod);
   cyclus::toolkit::CommodityProducer::SetCapacity(commod, throughput);
+  */
 }
+
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void PmSink::EnterNotify() {
@@ -52,11 +55,13 @@ void PmSink::EnterNotify() {
   buy_policy.Init(this, &inventory, std::string("inventory"));
 
   // dummy comp, use in_recipe if provided
+  /*
   cyclus::CompMap v;
   cyclus::Composition::Ptr comp = cyclus::Composition::CreateFromAtom(v);
   if (in_recipe != "") {
     comp = context()->GetRecipe(in_recipe);
   }
+  */
 
   if (in_commod_prefs.size() == 0) {
     for (int i = 0; i < in_commods.size(); ++i) {
@@ -70,10 +75,11 @@ void PmSink::EnterNotify() {
   }
 
   for (int i = 0; i != in_commods.size(); ++i) {
-    buy_policy.Set(in_commods[i], comp, in_commod_prefs[i]);
+    buy_policy.Set(in_commods[i], in_commod_prefs[i]);
   }
   buy_policy.Start();
 
+/*
   if (out_commods.size() == 1) {
     sell_policy.Init(this, &stocks, std::string("stocks"))
         .Set(out_commods.front())
@@ -83,10 +89,12 @@ void PmSink::EnterNotify() {
     ss << "out_commods has " << out_commods.size() << " values, expected 1.";
     throw cyclus::ValueError(ss.str());
   }
+  */
   RecordPosition();
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*
 std::string PmSink::str() {
   std::stringstream ss;
   std::string ans, out_str;
@@ -111,6 +119,7 @@ std::string PmSink::str() {
      << " produces " << out_str << "?:" << ans << "'}";
   return ss.str();
 }
+*/
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void PmSink::Tick() {
@@ -130,18 +139,20 @@ void PmSink::Tick() {
 void PmSink::Tock() {
   LOG(cyclus::LEV_INFO3, "ComCnv") << prototype() << " is tocking {";
 
-  BeginProcessing_();  // place unprocessed inventory into processing
-
+  Store_(throughput);  // place unprocessed inventory into processing
+    /*
   if (ready_time() >= 0 || residence_time == 0 && !inventory.empty()) {
     ReadyMatl_(ready_time());  // place processing into ready
   }
 
   ProcessMat_(throughput);  // place ready into stocks
+  */
 
   LOG(cyclus::LEV_INFO3, "ComCnv") << "}";
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*
 void PmSink::AddMat_(cyclus::Material::Ptr mat) {
   LOG(cyclus::LEV_INFO5, "ComCnv") << prototype() << " is initially holding "
                                    << inventory.quantity() << " total.";
@@ -158,25 +169,28 @@ void PmSink::AddMat_(cyclus::Material::Ptr mat) {
       << " of material to its inventory, which is holding "
       << inventory.quantity() << " total.";
 }
+*/
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void PmSink::BeginProcessing_() {
-  while (inventory.count() > 0) {
+void PmSink::Store_(double cap) {
+  if (!inventory.empty()){
     try {
-      processing.Push(inventory.Pop());
-      entry_times.push_back(context()->time());
+        double max_pop = std::min(cap, inventory.quantity());
+        store.Push(inventory.Pop(max_pop));
 
-      LOG(cyclus::LEV_DEBUG2, "ComCnv")
-          << "PmSink " << prototype()
-          << " added resources to processing at t= " << context()->time();
+        LOG(cyclus::LEV_DEBUG2, "ComCnv")
+            << "PmSink " << prototype()
+            << " added resources to store at t= " << context()->time();
     } catch (cyclus::Error& e) {
-      e.msg(Agent::InformErrorMsg(e.msg()));
-      throw e;
+        e.msg(Agent::InformErrorMsg(e.msg()));
+        throw e;
     }
   }
+
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*
 void PmSink::ProcessMat_(double cap) {
   using cyclus::Material;
   using cyclus::ResCast;
@@ -212,6 +226,7 @@ void PmSink::ProcessMat_(double cap) {
   }
 }
 
+
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void PmSink::ReadyMatl_(int time) {
   using cyclus::toolkit::ResBuf;
@@ -225,6 +240,7 @@ void PmSink::ReadyMatl_(int time) {
 
   ready.Push(processing.PopN(to_ready));
 }
+*/
 
 void PmSink::RecordPosition() {
   std::string specification = this->spec();
