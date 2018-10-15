@@ -1,7 +1,7 @@
 /// Taken from cyclus/cycamore storage.h file 
 
-#ifndef CYCLUS_CONDITIONINGS_CONDITIONING_H_
-#define CYCLUS_CONDITIONINGS_CONDITIONING_H_
+#ifndef CYCLUS_PMSINKS_PMSINK_H_
+#define CYCLUS_PMSINKS_PMSINK_H_
 
 #include <string>
 #include <list>
@@ -11,18 +11,18 @@
 #include "cyder_version.h"
 
 // forward declaration
-namespace conditioning {
-class Conditioning;
-} // namespace conditioning
+namespace pmsink {
+class PmSink;
+} // namespace pmsink
 
 
-namespace conditioning {
-/// @class Conditioning
+namespace pmsink {
+/// @class PmSink
 ///
 /// This Facility is intended to hold materials for a user specified
-/// amount of time in order to model a conditioning facility with a certain
+/// amount of time in order to model a pmsink facility with a certain
 /// residence time or holdup time.
-/// The Conditioning class inherits from the Facility class and is
+/// The PmSink class inherits from the Facility class and is
 /// dynamically loaded by the Agent class when requested.
 ///
 /// @section intro Introduction
@@ -39,7 +39,7 @@ namespace conditioning {
 /// in_recipe (optional) describes the incoming resource by recipe
 /// 
 /// @section optionalparams Optional Parameters
-/// max_inv_size is the maximum capacity of the inventory conditioning
+/// max_inv_size is the maximum capacity of the inventory pmsink
 /// throughput is the maximum processing capacity per timestep
 ///
 /// @section detailed Detailed Behavior
@@ -66,59 +66,60 @@ namespace conditioning {
 ///
 /// Sending Resources:
 /// Matched resources are sent immediately.
-class Conditioning 
+class PmSink 
   : public cyclus::Facility,
     public cyclus::toolkit::CommodityProducer,
     public cyclus::toolkit::Position {
  public:  
   /// @param ctx the cyclus context for access to simulation-wide parameters
-  Conditioning(cyclus::Context* ctx);
+  PmSink(cyclus::Context* ctx);
   
   #pragma cyclus decl
 
-  #pragma cyclus note {"doc": "Conditioning is a simple facility which accepts any number of commodities " \
+  #pragma cyclus note {"doc": "PmSink is a simple facility which accepts any number of commodities " \
                               "and holds them for a user specified amount of time. The commodities accepted "\
                               "are chosen based on the specified preferences list. Once the desired amount of material "\
                               "has entered the facility it is passed into a 'processing' buffer where it is held until "\
                               "the residence time has passed. The material is then passed into a 'ready' buffer where it is "\
                               "queued for removal. Currently, all input commodities are lumped into a single output commodity. "\
-                              "Conditioning also has the functionality to handle materials in discrete or continuous batches. Discrete "\
+                              "PmSink also has the functionality to handle materials in discrete or continuous batches. Discrete "\
                               "mode, which is the default, does not split or combine material batches. Continuous mode, however, "\
                               "divides material batches if necessary in order to push materials through the facility as quickly "\
                               "as possible."}
 
-  /// A verbose printer for the Conditioning Facility
+  /// A verbose printer for the PmSink Facility
   virtual std::string str();
 
   // --- Facility Members ---
   
   // --- Agent Members ---
-  /// Sets up the Conditioning Facility's trade requests
+  /// Sets up the PmSink Facility's trade requests
   virtual void EnterNotify();
 
-  /// The handleTick function specific to the Conditioning.
+  /// The handleTick function specific to the PmSink.
   virtual void Tick();
 
-  /// The handleTick function specific to the Conditioning.
+  /// The handleTick function specific to the PmSink.
   virtual void Tock();
 
  protected:
+  ///   @brief adds a material into the incoming commodity inventory
+  ///   @param mat the material to add to the incoming inventory.
+  ///   @throws if there is trouble with pushing to the inventory buffer.
+  void AddMat_(cyclus::Material::Ptr mat);
+
   /// @brief Move all unprocessed inventory to processing
   void BeginProcessing_();
-
-/// @brief move ready resources from processing to packaged after repackaging
-  /// @param *** ADD HERE ***
-  void PackageMatl_(int size_package,std::map<std::string, std::map<std::string, double>> package_properties);
-
-  /// @brief move ready resources from packaged to ready at a certain time
-  /// @param time the time of interest
-  void ReadyMatl_(int time);
 
   /// @brief Move as many ready resources as allowable into stocks
   /// @param cap current throughput capacity 
   void ProcessMat_(double cap);
 
-    /* --- Conditioning Members --- */
+  /// @brief move ready resources from processing to ready at a certain time
+  /// @param time the time of interest
+  void ReadyMatl_(int time);
+
+    /* --- PmSink Members --- */
 
   /// @brief current maximum amount that can be added to processing
   inline double current_capacity() const { 
@@ -167,70 +168,54 @@ class Conditioning
   int residence_time;
 
   #pragma cyclus var {"default": 1e299,\
-                     "tooltip":"throughput per timestep",\
-                     "doc":"the max number of waste canisters that can be moved through the facility per timestep",\
+                     "tooltip":"throughput per timestep (kg)",\
+                     "doc":"the max amount that can be moved through the facility per timestep (kg)",\
                      "uilabel":"Throughput",\
                      "uitype": "range", \
                      "range": [0.0, 1e299], \
-                     "units":""}
+                     "units":"kg"}
   double throughput;
-
-  #pragma cyclus var {"default": 10,\
-                     "tooltip":"no. of spent fuel bundles in each canister",\
-                     "doc":"the number of spent fuel bundles accepted in each waste canister",\
-                     "uilabel":"Package Size",\
-                     "uitype": "range", \
-                     "range": [0, 100], \
-                     "units":""}
-  int package_size;
 
   #pragma cyclus var {"default": 1e299,\
                       "tooltip":"maximum inventory size (kg)",\
-                      "doc":"the maximum amount of material that can be in all conditioning buffer stages",\
+                      "doc":"the maximum amount of material that can be in all pmsink buffer stages",\
                       "uilabel":"Maximum Inventory Size",\
                       "uitype": "range", \
                       "range": [0.0, 1e299], \
                       "units":"kg"}
   double max_inv_size; 
 
-  #pragma cyclus var {\
-                      "alias": ["packageproperties","layer",["properties","property","value"]],\
-                      "uitype":["oneormore","string",["oneormore","string","double"]],\
-                      "tooltip":"packaged material properties ",\
-                      "doc":"packaged material properties such as ",\
-                      "uilabel":"properties"}
-  std::map<std::string, std::map<std::string, double>> package_properties;                    
+  #pragma cyclus var {"default": False,\
+                      "tooltip":"Bool to determine how PmSink handles batches",\
+                      "doc":"Determines if PmSink will divide resource objects. Only controls material "\
+                            "handling within this facility, has no effect on DRE material handling. "\
+                            "If true, batches are handled as discrete quanta, neither split nor combined. "\
+                            "Otherwise, batches may be divided during processing. Default to false (continuous))",\
+                      "uilabel":"Batch Handling"}
+  bool discrete_handling;                    
 
   #pragma cyclus var {"tooltip":"Incoming material buffer"}
   cyclus::toolkit::ResBuf<cyclus::Material> inventory;
 
   #pragma cyclus var {"tooltip":"Output material buffer"}
-  cyclus::toolkit::ResBuf<cyclus::PackagedMaterial> stocks;
+  cyclus::toolkit::ResBuf<cyclus::Material> stocks;
 
   #pragma cyclus var {"tooltip":"Buffer for material held for required residence_time"}
-  cyclus::toolkit::ResBuf<cyclus::PackagedMaterial> ready;
+  cyclus::toolkit::ResBuf<cyclus::Material> ready;
 
   //// list of input times for materials entering the processing buffer
   #pragma cyclus var{"default": [],\
                       "internal": True}
   std::list<int> entry_times;
 
-  //// list of input times for youngest material in a packagedmaterial
-  #pragma cyclus var{"default": [],\
-                      "internal": True}
-  std::list<int> pm_entry_times;
-
   #pragma cyclus var {"tooltip":"Buffer for material still waiting for required residence_time"}
   cyclus::toolkit::ResBuf<cyclus::Material> processing;
-
-  #pragma cyclus var {"tooltip":"Buffer for material that just got packaged and are still waiting for required residence time "}
-  cyclus::toolkit::ResBuf<cyclus::PackagedMaterial> packaged;
 
   //// A policy for requesting material
   cyclus::toolkit::MatlBuyPolicy buy_policy;
 
   //// A policy for sending material
-  cyclus::toolkit::PackagedMatlSellPolicy sell_policy;
+  cyclus::toolkit::MatlSellPolicy sell_policy;
 
   #pragma cyclus var { \
     "default": 0.0, \
@@ -252,9 +237,9 @@ class Conditioning
 
   void RecordPosition();
 
-  friend class ConditioningTest;
+  friend class PmSinkTest;
 };
 
-}  // namespace conditioning
+}  // namespace pmsink
 
-#endif  // CYCLUS_CONDITIONINGS_CONDITIONING_H_
+#endif // CYCLUS_PMSINKS_PMSINK_H
