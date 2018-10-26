@@ -1,5 +1,5 @@
-#ifndef CYCLUS_PMSINKS_PMSINK_H_
-#define CYCLUS_PMSINKS_PMSINK_H_
+#ifndef CYDER_PMSINKS_PMSINK_H_
+#define CYDER_PMSINKS_PMSINK_H_
 
 #include <string>
 #include <list>
