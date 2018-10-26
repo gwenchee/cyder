@@ -120,6 +120,8 @@ std::string PmSink::str() {
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void PmSink::Tick() {
+  std::cout << "ticking in pmsink" << std::endl;
+  std::cout << inventory.count() << std::endl;
   // Set available capacity for Buy Policy
   inventory.capacity(current_capacity());
 
@@ -154,6 +156,7 @@ void PmSink::Tock() {
 
 
 void PmSink::Store_(double cap) {
+  std::cout << "start store" << std::endl;
   if (!inventory.empty()){
     try {
         double max_pop = std::min(cap, inventory.quantity());
