@@ -196,9 +196,9 @@ class PmSink
 
   void RecordPosition();
 
-  friend class PmSinkTest;
+  //friend class PmSinkTest;
 };
 
 }  // namespace pmsink
 
-#endif // CYCLUS_PMSINKS_PMSINK_H_
+#endif // CYDER_PMSINKS_PMSINK_H_
