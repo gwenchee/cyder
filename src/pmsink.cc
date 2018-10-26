@@ -51,13 +51,14 @@ void PmSink::InitFrom(cyclus::QueryableBackend* b) {
 void PmSink::EnterNotify() {
   cyclus::Facility::EnterNotify();
   buy_policy.Init(this, &inventory, std::string("inventory"));
-
+/*
   // dummy comp, use in_recipe if provided
   cyclus::CompMap v;
   cyclus::Composition::Ptr comp = cyclus::Composition::CreateFromAtom(v);
   if (in_recipe != "") {
     comp = context()->GetRecipe(in_recipe);
   }
+  */
 
   if (in_commod_prefs.size() == 0) {
     for (int i = 0; i < in_commods.size(); ++i) {
@@ -150,9 +151,9 @@ void PmSink::Tock() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void PmSink::Store_(double cap){
 
-  void PmSink::Store_(double cap) {
+
+void PmSink::Store_(double cap) {
   if (!inventory.empty()){
     try {
         double max_pop = std::min(cap, inventory.quantity());
@@ -166,9 +167,8 @@ void PmSink::Store_(double cap){
         throw e;
     }
   }
+}
 
-}
-}
 
 /*
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
