@@ -61,7 +61,7 @@ void PmSink::EnterNotify() {
   */
 
   // dummy pack 
-  PackagedMaterial::package p; 
+  cyclus::PackagedMaterial::package p; 
 
   if (in_commod_prefs.size() == 0) {
     for (int i = 0; i < in_commods.size(); ++i) {
