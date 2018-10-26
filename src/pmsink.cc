@@ -94,9 +94,10 @@ void PmSink::EnterNotify() {
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-/*
+
 std::string PmSink::str() {
   std::stringstream ss;
+  /*
   std::string ans, out_str;
   if (out_commods.size() == 1) {
     out_str = out_commods.front();
@@ -109,7 +110,9 @@ std::string PmSink::str() {
   } else {
     ans = "no";
   }
+  */
   ss << cyclus::Facility::str();
+  /*
   ss << " has facility parameters {"
      << "\n"
      << "     Output Commodity = " << out_str << ",\n"
@@ -117,9 +120,10 @@ std::string PmSink::str() {
      << "     Throughput = " << throughput << ",\n"
      << " commod producer members: "
      << " produces " << out_str << "?:" << ans << "'}";
+    */
   return ss.str();
 }
-*/
+
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void PmSink::Tick() {
@@ -133,6 +137,8 @@ void PmSink::Tick() {
         << " has capacity for " << current_capacity() << " kg of material.";
   }
   LOG(cyclus::LEV_INFO3, "ComCnv") << "}";
+  std::cout << "pm tick" << std::endl;
+  std::cout << inventory.count() << std::endl;
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -149,6 +155,7 @@ void PmSink::Tock() {
   */
 
   LOG(cyclus::LEV_INFO3, "ComCnv") << "}";
+  std::cout << "pm tock" << std::endl;
 }
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -186,6 +193,7 @@ void PmSink::Store_(double cap) {
         throw e;
     }
   }
+  std::cout << "stored" << std::endl;
 
 }
 

@@ -25,6 +25,10 @@
       <lib>cyder</lib>
       <name>Conditioning</name>
     </spec>
+    <spec>
+      <lib>cyder</lib>
+      <name>PmSink</name>
+    </spec>
   </archetypes>
 
 
@@ -48,12 +52,12 @@
 
   <facility>
     <config>
-      <Sink>
+      <PmSink>
         <in_commods>
           <val>packaged_spent_uox</val>
         </in_commods>
         <max_inv_size>1000</max_inv_size>
-      </Sink>
+      </PmSink>
     </config>
     <name>sink</name>
   </facility>
