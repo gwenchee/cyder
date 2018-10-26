@@ -255,7 +255,7 @@ void PmSink::ReadyMatl_(int time) {
 
   ready.Push(processing.PopN(to_ready));
 }
-
+*/
 void PmSink::RecordPosition() {
   std::string specification = this->spec();
   context()
@@ -267,7 +267,7 @@ void PmSink::RecordPosition() {
       ->AddVal("Longitude", longitude)
       ->Record();
 }
-*/
+
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" cyclus::Agent* ConstructPmSink(cyclus::Context* ctx) {
