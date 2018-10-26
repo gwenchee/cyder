@@ -60,6 +60,9 @@ void PmSink::EnterNotify() {
   }
   */
 
+  // dummy pack 
+  PackagedMaterial::package p; 
+
   if (in_commod_prefs.size() == 0) {
     for (int i = 0; i < in_commods.size(); ++i) {
       in_commod_prefs.push_back(cyclus::kDefaultPref);
@@ -73,7 +76,7 @@ void PmSink::EnterNotify() {
 
   for (int i = 0; i != in_commods.size(); ++i) {
     //buy_policy.Set(in_commods[i], comp, in_commod_prefs[i]);
-    buy_policy.Set(in_commods[i]);
+    buy_policy.Set(in_commods[i],p,in_commod_prefs[i]);
   }
   buy_policy.Start();
 /*
