@@ -10,7 +10,7 @@
 
 // forward declaration
 namespace pmsink {
-class Pmsink;
+class PmSink;
 } // namespace pmsink
 
 
