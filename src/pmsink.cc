@@ -88,6 +88,8 @@ PmSink::GetMatlRequests() {
   std::set<RequestPortfolio<Material>::Ptr> ports;
   RequestPortfolio<Material>::Ptr port(new RequestPortfolio<Material>());
   double amt = RequestAmt();
+  LOG(cyclus::LEV_INFO3, "PMSnkFac") << prototype() << " is requesting " 
+                                     << amt << " kg of " << in_commods[0];
   Material::Ptr mat;
 
   if (recipe_name.empty()) {
@@ -123,6 +125,8 @@ PmSink::GetProductRequests() {
   RequestPortfolio<Product>::Ptr
       port(new RequestPortfolio<Product>());
   double amt = RequestAmt();
+  LOG(cyclus::LEV_INFO3, "PMSnkFac") << prototype() << " is requesting " 
+                                     << amt << " kg " << in_commods[0];
 
   if (amt > cyclus::eps()) {
     CapacityConstraint<Product> cc(amt);
@@ -155,6 +159,8 @@ PmSink::GetPackagedMatlRequests() {
   RequestPortfolio<PackagedMaterial>::Ptr
       port(new RequestPortfolio<PackagedMaterial>());
   double amt = RequestAmt();
+  LOG(cyclus::LEV_INFO3, "PMSnkFac") << prototype() << " is requesting " 
+                                     << amt << " kg " << in_commods[0];
 
   if (amt > cyclus::eps()) {
     CapacityConstraint<PackagedMaterial> cc(amt);
@@ -215,7 +221,7 @@ void PmSink::Tick() {
   LOG(cyclus::LEV_INFO3, "SnkFac") << prototype() << " is ticking {";
 
   std::cout << "pm sink tick" << std::endl;
-  std::cout << inventory.quantity() << std::endl;
+  std::cout << inventory.count() << std::endl;
 
   double requestAmt = RequestAmt();
   // inform the simulation about what the sink facility will be requesting
