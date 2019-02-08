@@ -153,41 +153,51 @@ class PmSink
                       "doc": "total maximum inventory size of simplerepo facility"}
   double max_inv_size;
 
-  /// max buffer inventory size
+  /// max final inventory size
   #pragma cyclus var {"default": 1e299, \
-                      "tooltip": "simplerepo maximum buffer inventory size (waiting buffer)", \
-                      "uilabel": "Maximum buffer Inventory", \
+                      "tooltip": "simplerepo maximum final inventory size (waiting buffer)", \
+                      "uilabel": "Maximum final Inventory", \
                       "uitype": "range", \
                       "range": [0.0, 1e299], \
-                      "doc": "total maximum buffer inventory size of simplerepo facility"}
-  double max_buffer_inv_size;
-
-  /// monthly placement capacity into repo
-  #pragma cyclus var {"default": 1e299, \
-                      "tooltip": "simplerepo capacity", \
-                      "uilabel": "Maximum placement Throughput", \
-                      "uitype": "range", \
-                      "range": [0.0, 1e299], \`
-                      "doc": "capacity the simplerepo facility can " \
-                             "place at each time step"}
-  double capacity;
+                      "doc": "total maximum final inventory size of simplerepo facility"}
+  double max_final_inv_size;
 
   /// monthly acceptance capacity
   #pragma cyclus var {"default": 1e299, \
-                      "tooltip": "simplerepo throughput", \
+                      "tooltip": "simplerepo capacity", \
                       "uilabel": "Maximum acceptance Throughput", \
+                      "uitype": "range", \
+                      "range": [0.0, 1e299], \`
+                      "doc": "capacity the simplerepo facility can " \
+                             "accept at each time step"}
+  double capacity;
+
+  /// monthly placement capacity
+  #pragma cyclus var {"default": 1e299, \
+                      "tooltip": "simplerepo final capacity", \
+                      "uilabel": "Maximum placement Throughput", \
                       "uitype": "range", \
                       "range": [0.0, 1e299], \
                       "doc": "capacity the simplerepo facility can " \
+                             "place at each time step"}
+  double final_capacity;
+
+  /// maximum allowed temperature
+  #pragma cyclus var {"default": 1e299, \
+                      "tooltip": "simplerepo max allowed temp", \
+                      "uilabel": "Maximum Temperature", \
+                      "uitype": "range", \
+                      "range": [-10000, 10000], \
+                      "doc": "max temp of package simplerepo facility can " \
                              "accept at each time step"}
-  double throughput;
+  double max_temp;
 
   /// this facility holds material in storage.
   #pragma cyclus var {'capacity': 'max_inv_size'}
   cyclus::toolkit::ResBuf<cyclus::Resource> inventory;
 
-  #pragma cyclus var {'throughput': 'max_buffer_inv_size'}
-  cyclus::toolkit::ResBuf<cyclus::Resource> buffer_inventory;
+  #pragma cyclus var {'final_capacity': 'max_final_inv_size'}
+  cyclus::toolkit::ResBuf<cyclus::Resource> final_inventory;
 
   #pragma cyclus var { \
     "default": 0.0, \
