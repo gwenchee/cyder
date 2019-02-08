@@ -13,24 +13,24 @@ namespace cyder {
 
 class Context;
 
-/// This facility acts as a pmsink of materials and products with a fixed
+/// This facility acts as a simplerepo of materials and products with a fixed
 /// throughput (per time step) capacity and a lifetime capacity defined by a
 /// total inventory size.  The inventory size and throughput capacity both
 /// default to infinite. If a recipe is provided, it will request material with
 /// that recipe. Requests are made for any number of specified commodities.
-class PmSink 
+class SimpleRepo 
   : public cyclus::Facility,
     public cyclus::toolkit::Position  {
  public:
-  PmSink(cyclus::Context* ctx);
+  SimpleRepo(cyclus::Context* ctx);
 
-  virtual ~PmSink();
+  virtual ~SimpleRepo();
 
   virtual std::string version() { return CYDER_VERSION; }
 
   #pragma cyclus note { \
     "doc": \
-    " A pmsink facility that accepts materials and products with a fixed\n"\
+    " A simplerepo facility that accepts materials and products with a fixed\n"\
     " throughput (per time step) capacity and a lifetime capacity defined by\n"\
     " a total inventory size. The inventory size and throughput capacity\n"\
     " both default to infinite. If a recipe is provided, it will request\n"\
@@ -48,36 +48,36 @@ class PmSink
 
   virtual void Tock();
 
-  /// @brief PmSinkFacilities request Materials of their given commodity. Note
-  /// that it is assumed the PmSink operates on a single resource type!
+  /// @brief SimpleRepoFacilities request Materials of their given commodity. Note
+  /// that it is assumed the SimpleRepo operates on a single resource type!
   virtual std::set<cyclus::RequestPortfolio<cyclus::Material>::Ptr>
       GetMatlRequests();
 
-  /// @brief PmSinkFacilities request Products of their given
-  /// commodity. Note that it is assumed the PmSink operates on a single
+  /// @brief SimpleRepoFacilities request Products of their given
+  /// commodity. Note that it is assumed the SimpleRepo operates on a single
   /// resource type!
   virtual std::set<cyclus::RequestPortfolio<cyclus::Product>::Ptr>
       GetProductRequests();
 
       
 
-  /// @brief PmSinkFacilities request PackagedMaterials of their given
-  /// commodity. Note that it is assumed the PmSink operates on a single
+  /// @brief SimpleRepoFacilities request PackagedMaterials of their given
+  /// commodity. Note that it is assumed the SimpleRepo operates on a single
   /// resource type!
   virtual std::set<cyclus::RequestPortfolio<cyclus::PackagedMaterial>::Ptr>
       GetPackagedMatlRequests();
 
-  /// @brief PmSinkFacilities place accepted trade Materials in their Inventory
+  /// @brief SimpleRepoFacilities place accepted trade Materials in their Inventory
   virtual void AcceptMatlTrades(
       const std::vector< std::pair<cyclus::Trade<cyclus::Material>,
       cyclus::Material::Ptr> >& responses);
 
-  /// @brief PmSinkFacilities place accepted trade Products in their Inventory
+  /// @brief SimpleRepoFacilities place accepted trade Products in their Inventory
   virtual void AcceptProductTrades(
       const std::vector< std::pair<cyclus::Trade<cyclus::Product>,
       cyclus::Product::Ptr> >& responses); 
 
-  /// @brief PmSinkFacilities place accepted trade PackagedMaterials in their Inventory
+  /// @brief SimpleRepoFacilities place accepted trade PackagedMaterials in their Inventory
   virtual void AcceptPackagedMatlTrades(
       const std::vector< std::pair<cyclus::Trade<cyclus::PackagedMaterial>,
       cyclus::PackagedMaterial::Ptr> >& responses);
@@ -167,7 +167,7 @@ class PmSink
                       "tooltip": "simplerepo capacity", \
                       "uilabel": "Maximum acceptance Throughput", \
                       "uitype": "range", \
-                      "range": [0.0, 1e299], \`
+                      "range": [0.0, 1e299], \
                       "doc": "capacity the simplerepo facility can " \
                              "accept at each time step"}
   double capacity;

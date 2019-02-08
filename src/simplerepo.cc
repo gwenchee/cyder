@@ -4,12 +4,12 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "pmsink.h"
+#include "simplerepo.h"
 
 namespace cyder {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-PmSink::PmSink(cyclus::Context* ctx)
+SimpleRepo::SimpleRepo(cyclus::Context* ctx)
     : cyclus::Facility(ctx),
       capacity(std::numeric_limits<double>::max()),
       latitude(0.0),
@@ -18,28 +18,28 @@ PmSink::PmSink(cyclus::Context* ctx)
   SetMaxInventorySize(std::numeric_limits<double>::max());}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-PmSink::~PmSink() {}
+SimpleRepo::~SimpleRepo() {}
 
-#pragma cyclus def schema cyder::PmSink
+#pragma cyclus def schema cyder::SimpleRepo
 
-#pragma cyclus def annotations cyder::PmSink
+#pragma cyclus def annotations cyder::SimpleRepo
 
-#pragma cyclus def infiletodb cyder::PmSink
+#pragma cyclus def infiletodb cyder::SimpleRepo
 
-#pragma cyclus def snapshot cyder::PmSink
+#pragma cyclus def snapshot cyder::SimpleRepo
 
-#pragma cyclus def snapshotinv cyder::PmSink
+#pragma cyclus def snapshotinv cyder::SimpleRepo
 
-#pragma cyclus def initinv cyder::PmSink
+#pragma cyclus def initinv cyder::SimpleRepo
 
-#pragma cyclus def clone cyder::PmSink
+#pragma cyclus def clone cyder::SimpleRepo
 
-#pragma cyclus def initfromdb cyder::PmSink
+#pragma cyclus def initfromdb cyder::SimpleRepo
 
-#pragma cyclus def initfromcopy cyder::PmSink
+#pragma cyclus def initfromcopy cyder::SimpleRepo
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void PmSink::EnterNotify() {
+void SimpleRepo::EnterNotify() {
   cyclus::Facility::EnterNotify();
 
   if (in_commod_prefs.size() == 0) {
@@ -56,7 +56,7 @@ void PmSink::EnterNotify() {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-std::string PmSink::str() {
+std::string SimpleRepo::str() {
   using std::string;
   using std::vector;
   std::stringstream ss;
@@ -77,7 +77,7 @@ std::string PmSink::str() {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 std::set<cyclus::RequestPortfolio<cyclus::Material>::Ptr>
-PmSink::GetMatlRequests() {
+SimpleRepo::GetMatlRequests() {
   using cyclus::Material;
   using cyclus::RequestPortfolio;
   using cyclus::Request;
@@ -111,7 +111,7 @@ PmSink::GetMatlRequests() {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 std::set<cyclus::RequestPortfolio<cyclus::Product>::Ptr>
-PmSink::GetProductRequests() {
+SimpleRepo::GetProductRequests() {
   using cyclus::CapacityConstraint;
   using cyclus::Product;
   using cyclus::RequestPortfolio;
@@ -143,7 +143,7 @@ PmSink::GetProductRequests() {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 std::set<cyclus::RequestPortfolio<cyclus::PackagedMaterial>::Ptr>
-PmSink::GetPackagedMatlRequests() {
+SimpleRepo::GetPackagedMatlRequests() {
   using cyclus::CapacityConstraint;
   using cyclus::PackagedMaterial;
   using cyclus::RequestPortfolio;
@@ -174,7 +174,7 @@ PmSink::GetPackagedMatlRequests() {
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void PmSink::AcceptMatlTrades(
+void SimpleRepo::AcceptMatlTrades(
     const std::vector< std::pair<cyclus::Trade<cyclus::Material>,
                                  cyclus::Material::Ptr> >& responses) {
   std::cout << "matl trades" << std::endl;
@@ -186,7 +186,7 @@ void PmSink::AcceptMatlTrades(
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void PmSink::AcceptProductTrades(
+void SimpleRepo::AcceptProductTrades(
     const std::vector< std::pair<cyclus::Trade<cyclus::Product>,
                                  cyclus::Product::Ptr> >& responses) {
   std::vector< std::pair<cyclus::Trade<cyclus::Product>,
@@ -197,7 +197,7 @@ void PmSink::AcceptProductTrades(
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void PmSink::AcceptPackagedMatlTrades(
+void SimpleRepo::AcceptPackagedMatlTrades(
     const std::vector< std::pair<cyclus::Trade<cyclus::PackagedMaterial>,
                                  cyclus::PackagedMaterial::Ptr> >& responses) {
   std::vector< std::pair<cyclus::Trade<cyclus::PackagedMaterial>,
@@ -209,7 +209,7 @@ void PmSink::AcceptPackagedMatlTrades(
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void PmSink::Tick() {
+void SimpleRepo::Tick() {
   using std::string;
   using std::vector;
   LOG(cyclus::LEV_INFO3, "SnkFac") << prototype() << " is ticking {";
@@ -233,7 +233,7 @@ void PmSink::Tick() {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void PmSink::Tock() {
+void SimpleRepo::Tock() {
   LOG(cyclus::LEV_INFO3, "SnkFac") << prototype() << " is tocking {";
 
   //std::cout << "pm sink tock" << std::endl;
@@ -241,14 +241,14 @@ void PmSink::Tock() {
   // On the tock, the sink facility doesn't really do much.
   // Maybe someday it will record things.
   // For now, lets just print out what we have at each timestep.
-  LOG(cyclus::LEV_INFO4, "SnkFac") << "PmSink " << this->id()
+  LOG(cyclus::LEV_INFO4, "SnkFac") << "SimpleRepo " << this->id()
                                    << " is holding " << inventory.quantity()
                                    << " units of material at the close of month "
                                    << context()->time() << ".";
   LOG(cyclus::LEV_INFO3, "SnkFac") << "}";
 }
 
-void PmSink::RecordPosition() {
+void SimpleRepo::RecordPosition() {
   std::string specification = this->spec();
   context()
       ->NewDatum("AgentPosition")
@@ -261,8 +261,8 @@ void PmSink::RecordPosition() {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" cyclus::Agent* ConstructPmSink(cyclus::Context* ctx) {
-  return new PmSink(ctx);
+extern "C" cyclus::Agent* ConstructSimpleRepo(cyclus::Context* ctx) {
+  return new SimpleRepo(ctx);
 }
 
 }  // namespace cyder
