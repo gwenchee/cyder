@@ -183,7 +183,7 @@ class SimpleRepo
   double final_capacity;
 
   /// maximum allowed temperature
-  #pragma cyclus var {"default": 1e299, \
+  #pragma cyclus var {"default": 100, \
                       "tooltip": "simplerepo max allowed temp", \
                       "uilabel": "Maximum Temperature", \
                       "uitype": "range", \
@@ -191,6 +191,16 @@ class SimpleRepo
                       "doc": "max temp of package simplerepo facility can " \
                              "accept at each time step"}
   double max_temp;
+
+  /// Time taken to place package
+  #pragma cyclus var {"default": 2, \
+                      "tooltip": "simplerepo time taken to place package", \
+                      "uilabel": "Time taken", \
+                      "uitype": "range", \
+                      "range": [0, 1e299], \
+                      "doc": "max temp of package simplerepo facility can " \
+                             "accept at each time step"}
+  double placement_time; 
 
   /// this facility holds material in storage.
   #pragma cyclus var {'capacity': 'max_inv_size'}
