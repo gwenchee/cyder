@@ -9,6 +9,8 @@ USE_CYCLUS("cyder" "conditioning")
 
 USE_CYCLUS("cyder" "pmsink")
 
+USE_CYCLUS("cyder" "pmstorage")
+
 USE_CYCLUS("cyder" "simplerepo")
 
 INSTALL_CYCLUS_MODULE("cyder" "" "NONE")
