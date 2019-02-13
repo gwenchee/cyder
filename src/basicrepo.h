@@ -1,5 +1,5 @@
-#ifndef CYCLUS_PMSTORAGES_PMSTORAGE_H_
-#define CYCLUS_PMSTORAGES_PMSTORAGE_H_
+#ifndef CYCLUS_BASICREPO_BASICREPO_H_
+#define CYCLUS_BASICREPO_BASICREPO_H_
 
 #include <string>
 #include <list>
@@ -8,18 +8,18 @@
 #include "cyclus.h"
 
 // forward declaration
-namespace pmstorage {
-class PmStorage;
-} // namespace pmstorage
+namespace basicrepo {
+class BasicRepo;
+} // namespace basicrepo
 
 
-namespace pmstorage {
-/// @class PmStorage
+namespace basicrepo {
+/// @class BasicRepo
 ///
 /// This Facility is intended to hold materials for a user specified
-/// amount of time in order to model a pmstorage facility with a certain
+/// amount of time in order to model a basicrepo facility with a certain
 /// residence time or holdup time.
-/// The PmStorage class inherits from the Facility class and is
+/// The BasicRepo class inherits from the Facility class and is
 /// dynamically loaded by the Agent class when requested.
 ///
 /// @section intro Introduction
@@ -36,7 +36,7 @@ namespace pmstorage {
 /// in_recipe (optional) describes the incoming resource by recipe
 /// 
 /// @section optionalparams Optional Parameters
-/// max_inv_size is the maximum capacity of the inventory pmstorage
+/// max_inv_size is the maximum capacity of the inventory basicrepo
 /// throughput is the maximum processing capacity per timestep
 ///
 /// @section detailed Detailed Behavior
@@ -63,40 +63,40 @@ namespace pmstorage {
 ///
 /// Sending Resources:
 /// Matched resources are sent immediately.
-class PmStorage 
+class BasicRepo 
   : public cyclus::Facility,
     public cyclus::toolkit::CommodityProducer,
     public cyclus::toolkit::Position {
  public:  
   /// @param ctx the cyclus context for access to simulation-wide parameters
-  PmStorage(cyclus::Context* ctx);
+  BasicRepo(cyclus::Context* ctx);
   
   #pragma cyclus decl
 
-  #pragma cyclus note {"doc": "PmStorage is a simple facility which accepts any number of commodities " \
+  #pragma cyclus note {"doc": "BasicRepo is a simple facility which accepts any number of commodities " \
                               "and holds them for a user specified amount of time. The commodities accepted "\
                               "are chosen based on the specified preferences list. Once the desired amount of material "\
                               "has entered the facility it is passed into a 'processing' buffer where it is held until "\
                               "the residence time has passed. The material is then passed into a 'ready' buffer where it is "\
                               "queued for removal. Currently, all input commodities are lumped into a single output commodity. "\
-                              "PmStorage also has the functionality to handle materials in discrete or continuous batches. Discrete "\
+                              "BasicRepo also has the functionality to handle materials in discrete or continuous batches. Discrete "\
                               "mode, which is the default, does not split or combine material batches. Continuous mode, however, "\
                               "divides material batches if necessary in order to push materials through the facility as quickly "\
                               "as possible."}
 
-  /// A verbose printer for the PmStorage Facility
+  /// A verbose printer for the BasicRepo Facility
   virtual std::string str();
 
   // --- Facility Members ---
   
   // --- Agent Members ---
-  /// Sets up the PmStorage Facility's trade requests
+  /// Sets up the BasicRepo Facility's trade requests
   virtual void EnterNotify();
 
-  /// The handleTick function specific to the PmStorage.
+  /// The handleTick function specific to the BasicRepo.
   virtual void Tick();
 
-  /// The handleTick function specific to the PmStorage.
+  /// The handleTick function specific to the BasicRepo.
   virtual void Tock();
 
  protected:
@@ -116,7 +116,7 @@ class PmStorage
   /// @param time the time of interest
   void ReadyMatl_(int time);
 
-    /* --- PmStorage Members --- */
+    /* --- BasicRepo Members --- */
 
   /// @brief current maximum amount that can be added to processing
   inline double current_capacity() const { 
@@ -175,7 +175,7 @@ class PmStorage
 
   #pragma cyclus var {"default": 1e299,\
                       "tooltip":"maximum inventory size (kg)",\
-                      "doc":"the maximum amount of material that can be in all pmstorage buffer stages",\
+                      "doc":"the maximum amount of material that can be in all basicrepo buffer stages",\
                       "uilabel":"Maximum Inventory Size",\
                       "uitype": "range", \
                       "range": [0.0, 1e299], \
@@ -183,8 +183,8 @@ class PmStorage
   double max_inv_size; 
 
   #pragma cyclus var {"default": False,\
-                      "tooltip":"Bool to determine how PmStorage handles batches",\
-                      "doc":"Determines if PmStorage will divide resource objects. Only controls material "\
+                      "tooltip":"Bool to determine how BasicRepo handles batches",\
+                      "doc":"Determines if BasicRepo will divide resource objects. Only controls material "\
                             "handling within this facility, has no effect on DRE material handling. "\
                             "If true, batches are handled as discrete quanta, neither split nor combined. "\
                             "Otherwise, batches may be divided during processing. Default to false (continuous))",\
@@ -234,9 +234,9 @@ class PmStorage
 
   void RecordPosition();
 
-  friend class PmStorageTest;
+  friend class BasicRepoTest;
 };
 
-}  // namespace pmstorage
+}  // namespace basicrepo
 
-#endif  // CYCLUS_PMSTORAGES_PMSTORAGE_H_
+#endif  // CYCLUS_STORAGES_STORAGE_H_

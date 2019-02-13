@@ -83,7 +83,7 @@ PmSink::GetMatlRequests() {
   using cyclus::Request;
   using cyclus::Composition;
   
-  std::cout << "material requests" << std::endl;
+  //std::cout << "material requests" << std::endl;
 
   std::set<RequestPortfolio<Material>::Ptr> ports;
   RequestPortfolio<Material>::Ptr port(new RequestPortfolio<Material>());
@@ -117,7 +117,7 @@ PmSink::GetProductRequests() {
   using cyclus::RequestPortfolio;
   using cyclus::Request;
 
-  std::cout << "product requests" << std::endl;
+  //std::cout << "product requests" << std::endl;
   
   std::set<RequestPortfolio<Product>::Ptr> ports;
   RequestPortfolio<Product>::Ptr
@@ -149,7 +149,7 @@ PmSink::GetPackagedMatlRequests() {
   using cyclus::RequestPortfolio;
   using cyclus::Request;
   
-  std::cout << "packaged material requests" << std::endl;
+  //std::cout << "packaged material requests" << std::endl;
 
   std::set<RequestPortfolio<PackagedMaterial>::Ptr> ports;
   RequestPortfolio<PackagedMaterial>::Ptr

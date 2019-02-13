@@ -13,6 +13,8 @@ USE_CYCLUS("cyder" "pmstorage")
 
 USE_CYCLUS("cyder" "simplerepo")
 
+USE_CYCLUS("cyder" "basicrepo")
+
 INSTALL_CYCLUS_MODULE("cyder" "" "NONE")
 
 SET(TestSource ${cyder_TEST_CC} PARENT_SCOPE)
