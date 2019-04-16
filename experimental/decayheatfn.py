@@ -100,14 +100,15 @@ def q_poly(order,t,Q):
     t: np array, time values 
     Q: np array, Q values 
     OUTPUT: 
-    Q_new = np array, Q values fitted to order polynomial 
-    t_new = np.array, 1000 time steps  
+    Q_new: np array, Q values fitted to order polynomial 
+    t_new: np.array, 1000 time steps  
+    Q_coeffs: np array, coefficient values for poly fit 
     """
     Q_coeffs = np.polyfit(t, Q, order)
     f = np.poly1d(Q_coeffs)
     t_new = np.linspace(t[0], t[-1], 1000)
     Q_new = f(t_new)
-    return t_new, Q_new 
+    return t_new, Q_new, Q_coeffs 
 
 def plot_q(t,Q,t_new,Q_new,order): 
     """ This function gives a plot compring the original 
